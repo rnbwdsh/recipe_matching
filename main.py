@@ -16,7 +16,6 @@ df = pd.read_csv('../recipes_w_search_terms.csv', converters={k: lambda a: list(
                  nrows=10)  # for debugging purposes, only work with 10 recipes
 ingredients = Counter([item for sublist in df["ingredients"] for item in sublist])
 ingredients = OrderedDict(sorted(ingredients.items(), key=lambda x: x[1], reverse=True))
-print(df.index)
 
 
 @app.get("/")
@@ -32,9 +31,9 @@ async def search(cookie: Optional[str], q: Optional[str] = None):
     mask = df["ingredients"].apply(lambda x: all(item in x for item in ing))
     dfc = df[mask]
     if q:
-        dfc = dfc[dfc["search_terms"].apply(lambda x: q in x) |
-                  dfc["tags"].apply(lambda x: q in x) |
-                  dfc["name"].apply(lambda x: q in x)]
+        dfc = dfc[dfc["search_terms"].apply(lambda searchterms: q in searchterms) |
+                  dfc["tags"].apply(lambda tags: q in tags) |
+                  dfc["name"].apply(lambda name: q in name)]
     return Response(content=dfc.to_json(orient="records"), media_type="application/json")
 
 
@@ -42,7 +41,7 @@ async def search(cookie: Optional[str], q: Optional[str] = None):
 async def recipe(rid: int):
     if rid not in df.index:
         raise HTTPException(status_code=404, detail=f"Recipe with id {rid} not found")
-    return JSONResponse(df.loc[rid].to_dict())
+    return Response(content=df.loc[rid].to_dict(), media_type="application/json")
 
 
 @app.get("/ingredients")
