@@ -1,17 +1,124 @@
 <html>
 <head>
     <title>Recipe finder</title>
+    <link rel="stylesheet" href="static/style.css">
     <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+
 </head>
 
 <body>
-<form action="search">
-    <input name="q" type="text" value="" />
-    <input type="submit" value="Search" />
+<header>
+    <h1>Very cool recipe finder</h1>
+</header>
+<div>
+    <div class="ingredients">
+        <header>
+            <h2>Ingredients</h2>
+        </header>
+        <form action="search">
+            <input name="q" type="text" value=""/>
+            <input type="submit" value="Add"/>
+            <div id="ingredients-root"></div>
+            <script type="text/babel" src="static/code.js"></script>
+        </form>
+        <div id="root"></div>
+        <script type="text/babel" src="static/Autocomplete.js"></script>
+    </div>
 
-    <div id="ingredients-root"></div>
-    <script src="static/code.js"></script>
-</form>
+    <div class="recipes">
+        <header>
+            <h2>Recipes</h2>
+        </header>
+
+        <div class="dropdown">
+            <button onclick="toggleDropdown('typeDropdown')" class="dropbtn">Type of meal</button>
+            <div id="typeDropdown" class="dropdown-content">
+                <a>Breakfast</a>
+                <a>Lunch</a>
+                <a>Dinner</a>
+            </div>
+        </div>
+
+        <div class="dropdown">
+            <button onclick="window.location.href='/ingredients';" class="dropbtn">Cuisine</button>
+            <div id="cuisineDropdown" class="dropdown-content">
+                <a>Home</a>
+                <a>About</a>
+                <a>Contact</a>
+            </div>
+        </div>
+
+        <div class="dropdown">
+            <button onclick="showIngredients()" class="dropbtn">Diet</button>
+            <div id="dietDropdown" class="dropdown-content">
+                <a>Vegan</a>
+                <a>Vegetarian</a>
+                <a>Low Carb</a>
+            </div>
+        </div>
+
+        <div class="dropdown">
+            <button onclick="toggleDropdown('timeDropdown')" class="dropbtn">Time</button>
+            <div id="timeDropdown" class="dropdown-content">
+                <a>< 30 minutes</a>
+                <a>< 1 hour</a>
+                <a>1+ hours</a>
+            </div>
+
+            <form class="searchbar" action="search">
+                <input name="q" type="text" value=""/>
+                <input type="submit" value="Search"/>
+                <div id="recipes-root"></div>
+                <script src="static/code.js"></script>
+            </form>
+        </div>
+
+        <div>
+            <label id="ingredients">
+                test label for ingredients
+            </label>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    /*
+        Gets all ingredients and displays them in a text field -> use for ingredient list later
+     */
+    async function showIngredients() {
+
+        const ings = fetch("http://127.0.0.1:8000/ingredients")
+            .then((response) => response.json())
+            .then((ingredients) => {
+                console.log(Object.keys(ingredients));
+                document.getElementById("ingredients").textContent = Object.keys(ingredients).toString();
+            });
+    }
+
+    /*
+        Toggle dropdown menu on button
+     */
+    function toggleDropdown(button) {
+        document.getElementById(button).classList.toggle("show");
+    }
+
+    // Close the dropdown if the user clicks outside of it
+    window.onclick = function (event) {
+        if (!event.target.matches('.dropbtn')) {
+            var dropdowns = document.getElementsByClassName("dropdown-content");
+            var i;
+            for (i = 0; i < dropdowns.length; i++) {
+                var openDropdown = dropdowns[i];
+                if (openDropdown.classList.contains('show')) {
+                    openDropdown.classList.remove('show');
+                }
+            }
+        }
+    }
+
+</script>
+
 </body>
 </html>
