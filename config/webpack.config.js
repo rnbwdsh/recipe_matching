@@ -1,11 +1,9 @@
-const path = require('path');
 const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = {
     entry: './static/index.jsx',
     output: {
-        filename: './index.js',
-        path: path.resolve(__dirname, 'static'),
+        filename: './static/index.js',
     },
     mode: 'production',
     optimization: {
