@@ -1,26 +1,49 @@
- body{background-color:#84bf76;}
-    /*div menubar css*/
-    #menubar{width:810px; margin-left:auto;  margin-right:auto; margin-top:80px; height:auto;}
+body{background-color: #b6d7a8;}
 
-    .ingredients {
-      float: left;
-      width: 20%;
-      height: 85%;
-      background: #617a61;
-      padding: 20px;
-    }
+.content {
+  margin:auto;
+  padding: 10px;
+  overflow: hidden;
+}
 
-    .recipes {
-      float: left;
-      width: 70%;
-      height: 85%;
-      background: #679667;
-      padding: 20px;
-    }
+.header {
+  text-align: center;
+}
+
+h1 {
+  font-family: 'Amatic SC', serif;
+  font-size: 60px;
+}
+
+.ingredients {
+  background: #c4dfb9;
+  padding: 20px;
+}
+
+.food {
+  display: flex;
+  flex-direction: row;
+}
+
+.recipes {
+  display: inline-block;
+  float: left;
+  width: 1300px;
+  background: #d3e7ca;
+  padding: 20px;
+}
+
+.selection {
+  display: inline-block;
+  float: left;
+  flex-grow: 1;
+  background: #e9f3e4;
+  padding: 20px;
+}
 
     /* Dropdown Button */
 .dropbtn {
-  background-color: #3b5d3b;
+  background-color: #4e704e;
   color: white;
   padding: 16px;
   font-size: 16px;

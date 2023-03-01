@@ -26,7 +26,7 @@ async def root():
 
 @app.get("/search")
 # async def search(cookie: Optional[str] = Cookie(default=None), q: Optional[str] = None):
-async def search(cookie: Optional[str], q: Optional[str] = None):
+async def search(cookie: Optional[str] = Cookie(default=None), q: Optional[str] = None):
     ing = cookie.split(",") if cookie else []
     mask = df["ingredients"].apply(lambda x: all(item in x for item in ing))
     dfc = df[mask]

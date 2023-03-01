@@ -2,80 +2,72 @@
 <head>
     <title>Recipe finder</title>
     <link rel="stylesheet" href="static/style.css">
+    <link href='https://fonts.googleapis.com/css?family=Amatic SC' rel='stylesheet'>
     <script src="static/static.js"></script>
+    <link rel="shortcut icon" href="#">
 </head>
 
 <body>
-<header>
-    <h1>Very cool recipe finder</h1>
-</header>
-<div>
+<div class="content">
+    <div class="header">
+        <h1>Very cool and sick recipe finder</h1>
+    </div>
     <div class="ingredients">
-        <header>
-            <h2>Ingredients</h2>
-        </header>
         <div id="root"></div>
-        <form action="search">
-            <input name="q" type="text" value=""/>
-            <input type="submit" value="Add"/>
-            <div id="ingredients-root"></div>
-        </form>
     </div>
+    <div class="food">
+        <div class="recipes">
 
-    <div class="recipes">
-        <header>
-            <h2>Recipes</h2>
-        </header>
-
-        <div class="dropdown">
-            <button onclick="toggleDropdown('typeDropdown')" class="dropbtn">Type of meal</button>
-            <div id="typeDropdown" class="dropdown-content">
-                <a>Breakfast</a>
-                <a>Lunch</a>
-                <a>Dinner</a>
-            </div>
-        </div>
-
-        <div class="dropdown">
-            <button onclick="window.location.href='/ingredients';" class="dropbtn">Cuisine</button>
-            <div id="cuisineDropdown" class="dropdown-content">
-                <a>Home</a>
-                <a>About</a>
-                <a>Contact</a>
-            </div>
-        </div>
-
-        <div class="dropdown">
-            <button onclick="showIngredients()" class="dropbtn">Diet</button>
-            <div id="dietDropdown" class="dropdown-content">
-                <a>Vegan</a>
-                <a>Vegetarian</a>
-                <a>Low Carb</a>
-            </div>
-        </div>
-
-        <div class="dropdown">
-            <button onclick="toggleDropdown('timeDropdown')" class="dropbtn">Time</button>
-            <div id="timeDropdown" class="dropdown-content">
-                <a>< 30 minutes</a>
-                <a>< 1 hour</a>
-                <a>1+ hours</a>
+            <div class="dropdown">
+                <button onclick="toggleDropdown('typeDropdown')" class="dropbtn">Type of meal</button>
+                <div id="typeDropdown" class="dropdown-content">
+                    <a>Breakfast</a>
+                    <a>Lunch</a>
+                    <a>Dinner</a>
+                </div>
             </div>
 
-            <form class="searchbar" action="search">
-                <input name="q" type="text" value=""/>
-                <input type="submit" value="Search"/>
-                <div id="recipes-root"></div>
-            </form>
-        </div>
+            <div class="dropdown">
+                <button onclick="window.location.href='/ingredients';" class="dropbtn">Cuisine</button>
+                <div id="cuisineDropdown" class="dropdown-content">
+                    <a>Home</a>
+                    <a>About</a>
+                    <a>Contact</a>
+                </div>
+            </div>
 
-        <div>
-            <label id="ingredients">
-                test label for ingredients
-            </label>
+            <div class="dropdown">
+                <button onclick="showIngredients()" class="dropbtn">Diet</button>
+                <div id="dietDropdown" class="dropdown-content">
+                    <a>Vegan</a>
+                    <a>Vegetarian</a>
+                    <a>Low Carb</a>
+                </div>
+            </div>
+
+            <div class="dropdown">
+                <button onclick="toggleDropdown('timeDropdown')" class="dropbtn">Time</button>
+                <div id="timeDropdown" class="dropdown-content">
+                    <a>< 30 minutes</a>
+                    <a>< 1 hour</a>
+                    <a>1+ hours</a>
+                </div>
+
+                <form class="searchbar" action="search">
+                    <input name="q" type="text" value=""/>
+                    <input type="submit" value="Search"/>
+                    <div id="recipes-root"></div>
+                </form>
+            </div>
+
+            <div id="recipe-card"></div>
+        </div>
+        <div class="selection">
+            <div id="selected-recipe">
+                Your selected recipe will show up here...
+            </div>
         </div>
     </div>
-
 </div>
 <script src="static/index.js"></script>
 

@@ -1,14 +1,3 @@
-/*
-Gets all ingredients and displays them in a text field -> use for ingredient list later
-*/
-async function showIngredients() {
-    fetch("/ingredients")
-        .then((response) => response.json())
-        .then((ingredients) => {
-            console.log(Object.keys(ingredients));
-            document.getElementById("ingredients").textContent = Object.keys(ingredients).toString();
-        });
-}
 
 /*
     Toggle dropdown menu on button
@@ -29,4 +18,39 @@ window.onclick = function (event) {
             }
         }
     }
+}
+
+function setCookies(ingredient) {
+    document.cookie = "ingredients=" + ingredient + "; SameSite=None; Secure";       // order matters!! find out why todo
+
+
+
+}
+
+function getCookies() {
+    let defaultValues = [];
+    document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("ingredients="))
+        ?.split("=")[1]
+        .split(",")
+        .forEach((value) => defaultValues.push(value));
+    return defaultValues;
+}
+
+function viewRecipe() {
+    console.log("button is being pressed");
+    document.getElementById("selected-recipe").innerHTML = "hi hello!";
+}
+
+function calcIngredients(recipe) {
+    var missingIngs = [];
+    if(recipe !== undefined){
+        recipe.ingredients.map(ing => {
+            if(!getCookies().includes(ing)) missingIngs.push(ing);
+        })
+
+        return missingIngs.length === 0 ? "You have all ingredients for this recipe!" : "You are missing the following ingredients: " + missingIngs.join(", ");
+    }
+    return "Oh oh, something went wrong here...";
 }
