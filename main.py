@@ -61,10 +61,11 @@ def search(ingredients: Optional[str] = Cookie(default=None),
     dfc["posScore"] = dfc.apply(lambda row: score(row.ingredients, ing), axis=1)
     dfc["negScore"] = dfc.apply(lambda row: score(row.ingredients, used_ingredients), axis=1)
     dfc["score"] = dfc.posScore - dfc.negScore * SCALE
-    dfc.sort_values(by="score", ascending=False, inplace=True)
+    dfc.sort_values(by="score", ascending=False, inplace=True)\
+    dfc.reset_index(inplace=True)  # to return index
 
-    # return the top 1000 results as json
-    return Response(content=dfc.head(100).reset_index().to_json(orient="records", index=True), media_type="application/json")
+    # return the top 100 results as json
+    return Response(content=dfc.head(100).to_json(orient="records", index=True), media_type="application/json")
 
 
 @app.get("/recipe/{rid}")

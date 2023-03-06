@@ -1,6 +1,1 @@
-for d in */ ; do
-    cd $d
-    convert ingedients.jpg meal.jpg -quality 50 -set filename:base "%[basename]" "%[filename:base].jpg"
-    cd ..
-done
-
+find . -type f -iname "*.jpg in " -exec convert "{}" -quality 50 "{}" \;
