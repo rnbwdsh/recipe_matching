@@ -42,6 +42,7 @@ def root():
 def search(ingredients: Optional[str] = Cookie(default=None),
            q: Optional[str] = None,
            selected: str = ""):
+    print(ingredients, q, selected)
     ing = set(ingredients.split(",") if ingredients else [])
     selected = set([int(s) for s in selected.split(",")] if selected else [])
 
@@ -61,7 +62,7 @@ def search(ingredients: Optional[str] = Cookie(default=None),
     dfc["posScore"] = dfc.apply(lambda row: score(row.ingredients, ing), axis=1)
     dfc["negScore"] = dfc.apply(lambda row: score(row.ingredients, used_ingredients), axis=1)
     dfc["score"] = dfc.posScore - dfc.negScore * SCALE
-    dfc.sort_values(by="score", ascending=False, inplace=True)\
+    dfc.sort_values(by="score", ascending=False, inplace=True)
     dfc.reset_index(inplace=True)  # to return index
 
     # return the top 100 results as json
