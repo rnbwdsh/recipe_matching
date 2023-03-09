@@ -17,51 +17,18 @@
     </div>
     <div class="food">
         <div class="recipes">
-
-            <div class="dropdown">
-                <button onclick="toggleDropdown('typeDropdown')" class="dropbtn">Type of meal</button>
-                <div id="typeDropdown" class="dropdown-content">
-                    <a>Breakfast</a>
-                    <a>Lunch</a>
-                    <a>Dinner</a>
-                </div>
+            <div>
+                <span id="meal-select"></span>
+                <span id="cuisine-select"></span>
+                <span id="diet-select"></span>
+                <span id="time-select"></span>
+                <span id="search-bar"></span>
             </div>
-
-            <div class="dropdown">
-                <button onclick="window.location.href='/ingredients';" class="dropbtn">Cuisine</button>
-                <div id="cuisineDropdown" class="dropdown-content">
-                    <a>Home</a>
-                    <a>About</a>
-                    <a>Contact</a>
-                </div>
-            </div>
-
-            <div class="dropdown">
-                <button onclick="showIngredients()" class="dropbtn">Diet</button>
-                <div id="dietDropdown" class="dropdown-content">
-                    <a>Vegan</a>
-                    <a>Vegetarian</a>
-                    <a>Low Carb</a>
-                </div>
-            </div>
-
-            <div class="dropdown">
-                <button onclick="toggleDropdown('timeDropdown')" class="dropbtn">Time</button>
-                <div id="timeDropdown" class="dropdown-content">
-                    <a>< 30 minutes</a>
-                    <a>< 1 hour</a>
-                    <a>1+ hours</a>
-                </div>
-
-                <form class="searchbar" action="search">
-                    <input name="q" type="text" value=""/>
-                    <input type="submit" value="Search"/>
-                    <div id="recipes-root"></div>
-                </form>
-            </div>
+            <br>
 
             <div id="recipe-card"></div>
         </div>
+
         <div class="selection">
             <div id="selected-recipe">
                 Your selected recipe will show up here...

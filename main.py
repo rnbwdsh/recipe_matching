@@ -42,13 +42,15 @@ def root():
 def search(ingredients: Optional[str] = Cookie(default=None),
            q: Optional[str] = None,
            selected: str = ""):
-    print(ingredients, q, selected)
     ing = set(ingredients.split(",") if ingredients else [])
     selected = set([int(s) for s in selected.split(",")] if selected else [])
 
     # filter for ingredients that have at least one ingredient in common
-    mask = df["ingredients"].apply(lambda x: any(item in x for item in ing))
-    dfc = df[mask].copy()  # masked dataframe copy
+    if ing:
+        mask = df["ingredients"].apply(lambda x: any(item in x for item in ing))
+        dfc = df[mask].copy()  # masked dataframe copy
+    else:
+        dfc = df.copy()
 
     if q:  # filter by search terms, tags and name
         a = dfc["search_terms"].apply(lambda searchterms: q in searchterms)
