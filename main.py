@@ -42,6 +42,7 @@ def root():
 def search(ingredients: Optional[str] = Cookie(default=None),
            q: Optional[str] = None,
            selected: str = ""):
+    print(ingredients, q, selected)
     ing = set(ingredients.split(",") if ingredients else [])
     selected = set([int(s) for s in selected.split(",")] if selected else [])
 
