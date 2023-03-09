@@ -3,7 +3,7 @@ from collections import Counter, OrderedDict
 from typing import Optional, Dict
 
 import pandas as pd
-from fastapi import FastAPI, Cookie, HTTPException
+from fastapi import FastAPI, Cookie, HTTPException, Query
 from starlette.responses import HTMLResponse, Response
 from starlette.staticfiles import StaticFiles
 
@@ -39,16 +39,18 @@ def root():
 
 
 @app.get("/search")
-def search(ingredients: Optional[str] = Cookie(default=None),
-           q: Optional[str] = None,
-           selected: str = ""):
-    print(ingredients, q, selected)
+def search(ingredients: Optional[str] = Cookie(default=None, description="Comma separated list of ingredients. Only one has to match, higher matching ones get a higher score.", example="salt,water"),
+           q: Optional[str] = Query(default=None, description="Search query, exact-matching tags, search_terms and substring matching name", example="dinner"),
+           selected: Optional[str] = Query(default=None, description="Comma separated list of recipe ids, used for negative scoring ingredients already used in those recipes to increase variety.", example="38,39")):
     ing = set(ingredients.split(",") if ingredients else [])
     selected = set([int(s) for s in selected.split(",")] if selected else [])
 
     # filter for ingredients that have at least one ingredient in common
-    mask = df["ingredients"].apply(lambda x: any(item in x for item in ing))
-    dfc = df[mask].copy()  # masked dataframe copy
+    if ing:
+        mask = df["ingredients"].apply(lambda x: any(item in x for item in ing))
+        dfc = df[mask].copy()  # masked dataframe copy
+    else:
+        dfc = df.copy()
 
     if q:  # filter by search terms, tags and name
         a = dfc["search_terms"].apply(lambda searchterms: q in searchterms)
