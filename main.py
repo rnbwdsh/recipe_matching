@@ -1,9 +1,12 @@
+from re import findall
 from ast import literal_eval
 from collections import Counter, OrderedDict
 from typing import Optional, Dict
+from functools import reduce
+from operator import or_
 
 import pandas as pd
-from fastapi import FastAPI, Cookie, HTTPException
+from fastapi import FastAPI, Cookie, HTTPException, Query
 from starlette.responses import HTMLResponse, Response
 from starlette.staticfiles import StaticFiles
 
@@ -26,6 +29,8 @@ all_search_terms = OrderedDict(sorted(all_search_terms.items(), key=lambda x: x[
 df.tags = df.tags.apply(lambda x: set(x))
 all_tags = Counter([item for sublist in df.tags for item in sublist])
 all_tags = OrderedDict(sorted(all_tags.items(), key=lambda x: x[1], reverse=True))
+# similar for name: find all [a-z] words via regex, then create a set of all words
+df["_nameset"] = df.name.apply(lambda x: set(findall(r"[a-z]+", x.lower())))
 
 # weighting of positive and negative score
 SCALE = 1
@@ -39,12 +44,12 @@ def root():
 
 
 @app.get("/search")
-def search(ingredients: Optional[str] = Cookie(default=None),
-           q: Optional[str] = None,
-           selected: str = ""):
-    print(ingredients, q, selected)
-    ing = set(ingredients.split(",") if ingredients else [])
+def search(ingredients: Optional[str] = Cookie(default=None, description="Comma separated list of ingredients. Only one has to match, higher matching ones get a higher score.", example="salt,water"),
+           q: Optional[str] = Query(default=None, description="Comma separated search query, exact-matching tags, search_terms and [a-z] parts of names", example="dinner"),
+           selected: Optional[str] = Query(default=None, description="Comma separated list of recipe ids, used for negative scoring ingredients already used in those recipes to increase variety.", example="38,39")):
+    ing = set(map(str.strip, ingredients.split(",")) if ingredients else [])
     selected = set([int(s) for s in selected.split(",")] if selected else [])
+    q = set(map(str.strip, q.split(","))) if q else set()
 
     # filter for ingredients that have at least one ingredient in common
     if ing:
@@ -54,10 +59,9 @@ def search(ingredients: Optional[str] = Cookie(default=None),
         dfc = df.copy()
 
     if q:  # filter by search terms, tags and name
-        a = dfc["search_terms"].apply(lambda searchterms: q in searchterms)
-        b = dfc["tags"].apply(lambda tags: q in tags)
-        c = dfc["name"].apply(lambda name: q in name)
-        dfc = dfc[a | b | c]
+        search_cols = ["search_terms", "tags", "_nameset"]
+        search_bools = [dfc[col].apply(lambda x: bool(q & x)) for col in search_cols]
+        dfc = dfc[reduce(or_, search_bools)]  # or-combine all search_bools, so if any of the columns match, keep row
 
     # calculate score, and sort results by it
     selected_recipes = df.loc[list(selected)].ingredients
@@ -67,6 +71,7 @@ def search(ingredients: Optional[str] = Cookie(default=None),
     dfc["score"] = dfc.posScore - dfc.negScore * SCALE
     dfc.sort_values(by="score", ascending=False, inplace=True)
     dfc.reset_index(inplace=True)  # to return index
+    del dfc["_nameset"]  # don't return nameset to user
 
     # return the top 100 results as json
     return Response(content=dfc.head(100).to_json(orient="records", index=True), media_type="application/json")
