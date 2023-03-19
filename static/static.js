@@ -6,7 +6,7 @@ function getCookies() {
         ?.split("=")[1]
         .split(",")
         .forEach((value) => defaultValues.push(value));
-    return defaultValues;
+    return (defaultValues[0] === "") ? [] : defaultValues;
 }
 
 function calcIngredients(recipe) {

@@ -18,32 +18,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import React from "react";
 import ReactDOM from "react-dom";
 
-const IngredientsList = ({ ingredients }) => {
-    return (
-        <div>
-            {Object.keys(ingredients).map(key => (
-                <div key={key}>
-                    <input type="checkbox" id={key} />
-                    <label htmlFor={key}>{key}</label>
-                </div>
-            ))}
-        </div>
-    );
-};
-
-const IngredientsRoot = () => {
-    const [ingredients, setIngredients] = React.useState({});
-
-    React.useEffect(() => {
-        fetch('/ingredients')
-            .then((response) => response.json())
-            .then((ingredients) => setIngredients(ingredients));
-    }, []);
-
-    return <IngredientsList ingredients={ingredients} />;
-};
-
-function PopulatedComboBox() {
+function PopulatedComboBox(props) {
     const [ingredients, setIngredients] = React.useState([]);
 
     React.useEffect(() => {
@@ -60,7 +35,7 @@ function PopulatedComboBox() {
             id="tags-outlined"
             options={Object.keys(ingredients)}
             defaultValue={getCookies}
-            onChange={(event, value) => setCookies(value)}
+            onChange={(event, value) => setCookies(value, props.tags, props.setTags)}
             filterSelectedOptions
             renderInput={(params) => (
                 <TextField
@@ -77,25 +52,25 @@ const RecipesRoot = ({tags}) => {
 
     React.useEffect(() => {
         fetch('/search?' + new URLSearchParams({
-            q: tags
+            q: Object.values(tags).filter(val => val !== "").toString()
         }))
             .then((response) => response.json())
             .then((recipes) => {
                 setRecipes(recipes);
             });
-    });
+    }, [tags]);
 
     return <RecipeCard recipes={recipes}/>;
 };
 
-function RecipeCard(recipes) {
-    if(recipes.recipes[1] === undefined){       // TODO: find a better way to check this, this is ungodly
+function RecipeCard(props) {
+    if(props.recipes[1] === undefined){
         return <div>Loading...</div>
     }
     else{
         return (
             <Grid container spacing={3}>
-                {recipes.recipes.map(recipe => (
+                {props.recipes.map(recipe => (
                     <Grid item xs={12} sm={6} md={3}>
                         <Box width='300px'>
                             <Card>
@@ -124,7 +99,6 @@ function RecipeCard(recipes) {
 }
 
 function DetailedRecipeCard(recipe) {
-    console.log(recipe);
     const card = (
         <Box width='480px'>
             <Card>
@@ -139,6 +113,9 @@ function DetailedRecipeCard(recipe) {
                     <Typography variant='body2' sx={{ mt: 2 }} style={{whiteSpace: 'pre-line'}}>
                         {recipe.steps.map((elem, idx) => idx+1 + '. ' + elem).join('\n')}
                     </Typography>
+                    <Typography variant='body2' color='text.secondary' sx={{ mt: 3 }} style={{whiteSpace: 'pre-line'}}>
+                        Tags: {recipe.tags.join(', ')}
+                    </Typography>
                 </CardContent>
             </Card>
         </Box>
@@ -149,6 +126,17 @@ function DetailedRecipeCard(recipe) {
 }
 
 export default function TagSelect(props) {
+    let key;
+    let state = JSON.parse(JSON.stringify(props.tags));
+
+    switch(props.label){
+        case 'Meal Type': key = "type"; break;
+        case 'Cuisine': key = "cuisine"; break;
+        case 'Diet': key = "diet"; break;
+        case 'Time': key = "time"; break;
+        default: console.log("Error: Tag Select state could not be defined"); break;
+    }
+
     const [tagType, setTagType] = React.useState("");
 
     const handleChange = (event) => {
@@ -156,10 +144,8 @@ export default function TagSelect(props) {
             target: { value },
         } = event;
         setTagType(value);
-        if(value !== ""){
-            if(props.tags !== "") props.setTags(props.tags + "," + value);
-            else props.setTags(value);
-        }
+        state[key] = value;
+        props.setTags(state);
     };
 
     return (
@@ -188,13 +174,13 @@ export default function TagSelect(props) {
 }
 
 function Search(props) {
-    const [search, setSearch] = React.useState("");
+    const [searchVal, setSearch] = React.useState("");
+
+    let state = JSON.parse(JSON.stringify(props.tags));
 
     function searchRecipes() {
-        if(search !== ""){
-            if(props.tags !== "") props.setTags(props.tags + "," + search);
-            else props.setTags(search);
-        }
+        state['search'] = searchVal;
+        props.setTags(state);
         console.log(props.tags);
     }
 
@@ -202,7 +188,7 @@ function Search(props) {
         <TextField
             id="recipe-search"
             label="Search for recipes..."
-            value={search}
+            value={searchVal}
             onChange={(e) => {setSearch(e.target.value);}}
             sx={{width: 270}}
             InputProps={{endAdornment: (
@@ -265,22 +251,26 @@ const timeOptions = [
 ];
 
 function RecipeContainer() {
-    const [tags, setTags] = React.useState("");
-
-    // TODO: find a way to put tags into arrays bc strings dont care about duplicate items
+    const [tags, setTags] = React.useState({
+        type: "",
+        cuisine: "",
+        diet: "",
+        time: "",
+        search: ""
+    });
 
     return (
         <div>
             <div className="ingredients">
-                <PopulatedComboBox/>
+                <PopulatedComboBox tags={tags} setTags={setTags}/>
             </div>
             <div className="food">
                 <div className="recipes">
                     <div>
-                        <span><TagSelect label={"Meal Type"} options={mealOptions} isMult={true} tags={tags} setTags={setTags}/></span>
-                        <span><TagSelect label={"Cuisine"} options={cuisineOptions} isMult={true} tags={tags} setTags={setTags}/></span>
-                        <span><TagSelect label={"Diet"} options={dietOptions} isMult={true} tags={tags} setTags={setTags}/></span>
-                        <span><TagSelect label={"Time"} options={timeOptions} isMult={false} tags={tags} setTags={setTags}/></span>
+                        <span><TagSelect label={"Meal Type"} options={mealOptions} tags={tags} setTags={setTags}/></span>
+                        <span><TagSelect label={"Cuisine"} options={cuisineOptions} tags={tags} setTags={setTags}/></span>
+                        <span><TagSelect label={"Diet"} options={dietOptions} tags={tags} setTags={setTags}/></span>
+                        <span><TagSelect label={"Time"} options={timeOptions} tags={tags} setTags={setTags}/></span>
                         <span><Search tags={tags} setTags={setTags}/></span>
                     </div>
                     <br/>
@@ -296,8 +286,9 @@ function RecipeContainer() {
     );
 }
 
-function setCookies(ingredient) {
-    document.cookie = "ingredients=" + ingredient + "; SameSite=None; Secure";       // order matters!! find out why todo
+function setCookies(ingredient, tags, setTags) {
+    document.cookie = "ingredients=" + ingredient + "; SameSite=None; Secure";
+    setTags(JSON.parse(JSON.stringify(tags)));
 }
 
 ReactDOM.createRoot(document.getElementById('recipe-container')).render(<RecipeContainer />);
