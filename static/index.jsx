@@ -50,7 +50,6 @@ function PopulatedComboBox() {
         fetch('/ingredients')
             .then((response) => response.json())
             .then((ingredients) => {
-                console.log(ingredients);
                 setIngredients(ingredients);
             });
     }, []);
@@ -73,16 +72,18 @@ function PopulatedComboBox() {
     );
 }
 
-const RecipesRoot = () => {
+const RecipesRoot = ({tags}) => {
     const [recipes, setRecipes] = React.useState({});
 
     React.useEffect(() => {
-        fetch('/search')
+        fetch('/search?' + new URLSearchParams({
+            q: tags
+        }))
             .then((response) => response.json())
             .then((recipes) => {
                 setRecipes(recipes);
             });
-    }, []);
+    });
 
     return <RecipeCard recipes={recipes}/>;
 };
@@ -148,14 +149,19 @@ function DetailedRecipeCard(recipe) {
 }
 
 export default function TagSelect(props) {
-    const [tagType, setTagType] = React.useState([]);
+    const [tagType, setTagType] = React.useState("");
 
     const handleChange = (event) => {
         const {
             target: { value },
         } = event;
         setTagType(value);
+        if(value !== ""){
+            if(props.tags !== "") props.setTags(props.tags + "," + value);
+            else props.setTags(value);
+        }
     };
+
     return (
         <FormControl sx={{width: 250}}>
             <InputLabel id="label">{props.label}</InputLabel>
@@ -164,13 +170,10 @@ export default function TagSelect(props) {
                 placeholder={props.label}
                 value={tagType}
                 onChange={handleChange}
-                multiple={props.isMult}
             >
-                {!props.isMult &&
-                    <MenuItem value="">
+                <MenuItem value="">
                     <em>None</em>
-                    </MenuItem>
-                }
+                </MenuItem>
                 {props.options.map((option) => (
                     <MenuItem
                         key={option.value}
@@ -184,11 +187,23 @@ export default function TagSelect(props) {
     );
 }
 
-function Search() {
+function Search(props) {
+    const [search, setSearch] = React.useState("");
+
+    function searchRecipes() {
+        if(search !== ""){
+            if(props.tags !== "") props.setTags(props.tags + "," + search);
+            else props.setTags(search);
+        }
+        console.log(props.tags);
+    }
+
     return (
         <TextField
             id="recipe-search"
             label="Search for recipes..."
+            value={search}
+            onChange={(e) => {setSearch(e.target.value);}}
             sx={{width: 270}}
             InputProps={{endAdornment: (
                     <InputAdornment position="end">
@@ -199,10 +214,6 @@ function Search() {
                 )}}
         />
     );
-}
-
-function setCookies(ingredient) {
-    document.cookie = "ingredients=" + ingredient + "; SameSite=None; Secure";       // order matters!! find out why todo
 }
 
 const mealOptions = [
@@ -253,10 +264,40 @@ const timeOptions = [
     {value: "60-minutes-or-less", label: "< 60 minutes"}
 ];
 
-ReactDOM.createRoot(document.getElementById('root')).render(<PopulatedComboBox />);
-ReactDOM.render(<RecipesRoot/>, document.getElementById('recipe-card'));
-ReactDOM.render(<TagSelect label={"Meal Type"} options={mealOptions} isMult={true}/>, document.getElementById('meal-select'));
-ReactDOM.render(<TagSelect label={"Cuisine"} options={cuisineOptions} isMult={true}/>, document.getElementById('cuisine-select'));
-ReactDOM.render(<TagSelect label={"Diet"} options={dietOptions} isMult={true}/>, document.getElementById('diet-select'));
-ReactDOM.render(<TagSelect label={"Time"} options={timeOptions} isMult={false}/>, document.getElementById('time-select'));
-ReactDOM.render(<Search/>, document.getElementById('search-bar'));
+function RecipeContainer() {
+    const [tags, setTags] = React.useState("");
+
+    // TODO: find a way to put tags into arrays bc strings dont care about duplicate items
+
+    return (
+        <div>
+            <div className="ingredients">
+                <PopulatedComboBox/>
+            </div>
+            <div className="food">
+                <div className="recipes">
+                    <div>
+                        <span><TagSelect label={"Meal Type"} options={mealOptions} isMult={true} tags={tags} setTags={setTags}/></span>
+                        <span><TagSelect label={"Cuisine"} options={cuisineOptions} isMult={true} tags={tags} setTags={setTags}/></span>
+                        <span><TagSelect label={"Diet"} options={dietOptions} isMult={true} tags={tags} setTags={setTags}/></span>
+                        <span><TagSelect label={"Time"} options={timeOptions} isMult={false} tags={tags} setTags={setTags}/></span>
+                        <span><Search tags={tags} setTags={setTags}/></span>
+                    </div>
+                    <br/>
+                    <div><RecipesRoot tags={tags}/></div>
+                </div>
+                <div className="selection">
+                    <div id="selected-recipe">
+                        Your selected recipe will show up here...
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+function setCookies(ingredient) {
+    document.cookie = "ingredients=" + ingredient + "; SameSite=None; Secure";       // order matters!! find out why todo
+}
+
+ReactDOM.createRoot(document.getElementById('recipe-container')).render(<RecipeContainer />);

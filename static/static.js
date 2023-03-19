@@ -20,7 +20,3 @@ function calcIngredients(recipe) {
     }
     return "Oh oh, something went wrong here...";
 }
-
-function searchRecipes() {
-    console.log("hi im looking :)");
-}
