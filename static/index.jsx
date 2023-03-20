@@ -71,8 +71,7 @@ function RecipeCard(props) {
         return (
             <Grid container spacing={3}>
                 {props.recipes.map(recipe => (
-                    <Grid item xs={12} sm={6} md={3}>
-                        <Box width='300px'>
+                    <Grid item>
                             <Card>
                                 <CardMedia component='img' height='140' image={"static/images/" + recipe.id + "/meal.jpg"} alt={"image of recipe " + recipe.name}/>
                                 <CardContent>
@@ -80,17 +79,16 @@ function RecipeCard(props) {
                                         {recipe.name}
                                     </Typography>
                                     <Typography variant='body2' color='text.secondary'>
-                                        {recipe.ingredients.join(', ')}
-                                    </Typography>
-                                    <Typography variant='body2' sx={{ mt: 2 }}>
-                                        {calcIngredients(recipe)}
+                                        {(filterIngredients(recipe.ingredients, false).length > 0) &&
+                                            <b>{filterIngredients(recipe.ingredients, false).join(", ")}, </b>
+                                        }
+                                        <span>{filterIngredients(recipe.ingredients, true).join(", ")}</span>
                                     </Typography>
                                 </CardContent>
                                 <CardActions>
                                     <Button size='small' onClick={() => DetailedRecipeCard(recipe)}>View recipe</Button>
                                 </CardActions>
                             </Card>
-                        </Box>
                     </Grid>
                 ))}
             </Grid>
@@ -99,30 +97,38 @@ function RecipeCard(props) {
 }
 
 function DetailedRecipeCard(recipe) {
-    const card = (
-        <Box width='480px'>
-            <Card>
-                <CardMedia component='img' image={"static/images/" + recipe.id + "/meal.jpg"} alt={"image of recipe " + recipe.name}/>
-                <CardContent>
-                    <Typography gutterBottom variant='h5' component='div'>
-                        {recipe.name}
-                    </Typography>
-                    <Typography variant='body2' color='text.secondary' style={{whiteSpace: 'pre-line'}}>
-                        {recipe.ingredients_raw_str.join('\n')}
-                    </Typography>
-                    <Typography variant='body2' sx={{ mt: 2 }} style={{whiteSpace: 'pre-line'}}>
-                        {recipe.steps.map((elem, idx) => idx+1 + '. ' + elem).join('\n')}
-                    </Typography>
-                    <Typography variant='body2' color='text.secondary' sx={{ mt: 3 }} style={{whiteSpace: 'pre-line'}}>
-                        Tags: {recipe.tags.join(', ')}
-                    </Typography>
-                </CardContent>
-            </Card>
-        </Box>
-    );
+    var children = document.getElementById('selected-recipe').children;
+    if(children.length > 0 && children[0].id == recipe.id) {
+        ReactDOM.unmountComponentAtNode(document.getElementById('selected-recipe'));
+    }
+    else {
+        const card = (
+                <Card id={recipe.id}>
+                    <CardMedia component='img' image={"static/images/" + recipe.id + "/meal.jpg"} alt={"image of recipe " + recipe.name}/>
 
-    ReactDOM.render(card, document.getElementById('selected-recipe'));
+                    <CardContent>
+                        <Typography gutterBottom variant='h5' component='div'>
+                            {recipe.name}
+                        </Typography>
+                        <Typography variant='body2' color='text.secondary' style={{whiteSpace: 'pre-line'}}>
+                            {recipe.ingredients_raw_str.join('\n')}
+                        </Typography>
 
+                        <CardMedia component='img' image={"static/images/" + recipe.id + "/ingedients.jpg"} alt={"image of ingredients " + recipe.name}/>
+
+                        <Typography variant='body2' sx={{ mt: 2 }} style={{whiteSpace: 'pre-line'}}>
+                            {recipe.steps.map((elem, idx) => idx+1 + '. ' + elem).join('\n')}
+                        </Typography>
+                        <Typography variant='body2' color='text.secondary' sx={{ mt: 3 }} style={{whiteSpace: 'pre-line'}}>
+                            Tags: {recipe.tags.join(', ')}
+                        </Typography>
+                    </CardContent>
+                </Card>
+        );
+
+
+        ReactDOM.render(card, document.getElementById('selected-recipe'));
+    }
 }
 
 export default function TagSelect(props) {
@@ -278,7 +284,7 @@ function RecipeContainer() {
                 </div>
                 <div className="selection">
                     <div id="selected-recipe">
-                        Your selected recipe will show up here...
+                        &nbsp;
                     </div>
                 </div>
             </div>

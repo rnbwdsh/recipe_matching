@@ -18,17 +18,11 @@ list_columns = ["ingredients", "ingredients_raw_str", "steps", "tags", "search_t
 df = pd.read_csv('recipes_w_search_terms_10k.csv', converters={k: lambda a: list(literal_eval(a)) for k in list_columns}, index_col=0)  # for debugging purposes, only work with 10 recipes
 
 # create all_ingredients sets
+df.search_terms = df.search_terms.apply(lambda x: set(x))
+df.tags = df.tags.apply(lambda x: set(x))
 df.ingredients = df.ingredients.apply(lambda x: set(x))
 all_ingredients = Counter([item for sublist in df.ingredients for item in sublist])
 all_ingredients = OrderedDict(sorted(all_ingredients.items(), key=lambda x: x[1], reverse=True))
-# same for search_terms
-df.search_terms = df.search_terms.apply(lambda x: set(x))
-all_search_terms = Counter([item for sublist in df.search_terms for item in sublist])
-all_search_terms = OrderedDict(sorted(all_search_terms.items(), key=lambda x: x[1], reverse=True))
-# same for tags
-df.tags = df.tags.apply(lambda x: set(x))
-all_tags = Counter([item for sublist in df.tags for item in sublist])
-all_tags = OrderedDict(sorted(all_tags.items(), key=lambda x: x[1], reverse=True))
 # similar for name: find all [a-z] words via regex, then create a set of all words
 df["_nameset"] = df.name.apply(lambda x: set(findall(r"[a-z]+", x.lower())))
 
@@ -87,16 +81,6 @@ def recipe(rid: int):
 @app.get("/ingredients")
 def all_ingredients_() -> Dict[str, int]:
     return all_ingredients
-
-
-@app.get("/search_terms")
-async def all_search_terms_() -> Dict[str, int]:
-    return all_search_terms
-
-
-@app.get("/tags")
-async def all_tags_() -> Dict[str, int]:
-    return all_tags
 
 
 def score(a, b):

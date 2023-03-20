@@ -28,7 +28,6 @@ h1 {
 .recipes {
   display: inline-block;
   float: left;
-  width: 1300px;
   background: #d3e7ca;
   padding: 20px;
 }
@@ -39,4 +38,13 @@ h1 {
   flex-grow: 1;
   background: #e9f3e4;
   padding: 20px;
+}
+
+#selected-recipe > div {
+  min-width: 20vw;
+}
+
+.MuiGrid-item {
+  min-width: 12em;
+  max-width: 16em;
 }

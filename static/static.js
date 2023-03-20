@@ -9,14 +9,14 @@ function getCookies() {
     return (defaultValues[0] === "") ? [] : defaultValues;
 }
 
-function calcIngredients(recipe) {
-    var missingIngs = [];
-    if(recipe !== undefined){
-        recipe.ingredients.map(ing => {
-            if(!getCookies().includes(ing)) missingIngs.push(ing);
-        })
-
-        return missingIngs.length === 0 ? "You have all ingredients for this recipe!" : "You are missing the following ingredients: " + missingIngs.join(", ");
-    }
-    return "Oh oh, something went wrong here...";
+// function to filter a list of ingredients, based if they are in cookies or not
+function filterIngredients(ingredients, invert) {
+    let cookies = getCookies();
+    let filtered = [];
+    ingredients.forEach((ingredient) => {
+        if (invert ^ cookies.includes(ingredient)) {
+            filtered.push(ingredient);
+        }
+    });
+    return filtered;
 }
