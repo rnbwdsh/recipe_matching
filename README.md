@@ -1,8 +1,8 @@
 # Recipe matching
 
 Authors:
-* M. Vogl, k1155575
-* Finn W., k1234567
+* M. Vogl, k01155575
+* Finn W., k11906484
 
 This project was done as the 2nd project of the WS2022/23 course "Missing Semester".
 
