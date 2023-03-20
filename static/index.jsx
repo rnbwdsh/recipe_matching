@@ -1,7 +1,6 @@
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import {
-    Box,
     Card,
     CardContent,
     Typography,
@@ -69,7 +68,7 @@ function RecipeCard(props) {
     }
     else{
         return (
-            <Grid container spacing={3}>
+            <Grid container spacing={3}         justify="space-evenly">
                 {props.recipes.map(recipe => (
                     <Grid item>
                             <Card>
@@ -98,7 +97,7 @@ function RecipeCard(props) {
 
 function DetailedRecipeCard(recipe) {
     var children = document.getElementById('selected-recipe').children;
-    if(children.length > 0 && children[0].id == recipe.id) {
+    if(children.length > 0 && children[0].id === recipe.id) {
         ReactDOM.unmountComponentAtNode(document.getElementById('selected-recipe'));
     }
     else {
