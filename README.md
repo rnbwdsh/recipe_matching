@@ -4,7 +4,7 @@ Authors:
 * M. Vogl, k01155575
 * Finn W., k11906484
 
-This project was done as the 2nd project of the WS2022/23 course "Missing Semester".
+This project was done as the 2nd project of the course "Missing Semester", as well as "Engineering of AI intensive systems" at JKU Linz.
 
 License: CC0 (Creative Commons Zero, Public Domain)
 
@@ -40,20 +40,3 @@ We made sure the application is responsive and works on mobile devices as well. 
 ![Screenshot of the application on a 3440x1440 monitor](doc-images/wide.png)
 ![Screenshot of the application on a fullhd phone](doc-images/phone.png)
 
-# Frogs
-
-We decided to use stable-diffusion to generate some never-before-seen cute frogs. 
-
-We hope they will bring you joy.
-
-![Frog 1](doc-images/1.png)
-![Frog 2](doc-images/2.png)
-![Frog 3](doc-images/3.png)
-![Frog 4](doc-images/4.png)
-![Frog 5](doc-images/5.png)
-![Frog 6](doc-images/6.png)
-![Frog 7](doc-images/7.png)
-![Frog 8](doc-images/8.png)
-![Frog 9](doc-images/9.png)
-![Frog 10](doc-images/A.png)
-![Frog 11](doc-images/B.png)
