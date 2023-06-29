@@ -1,0 +1,50 @@
+body{background-color: #b6d7a8;}
+
+.content {
+  margin:auto;
+  padding: 10px;
+  overflow: hidden;
+}
+
+.header {
+  text-align: center;
+}
+
+h1 {
+  font-family: 'Amatic SC', serif;
+  font-size: 60px;
+}
+
+.ingredients {
+  background: #c4dfb9;
+  padding: 20px;
+}
+
+.food {
+  display: flex;
+  flex-direction: row;
+}
+
+.recipes {
+  display: inline-block;
+  float: left;
+  background: #d3e7ca;
+  padding: 20px;
+}
+
+.selection {
+  display: inline-block;
+  float: left;
+  flex-grow: 1;
+  background: #e9f3e4;
+  padding: 20px;
+}
+
+#selected-recipe > div {
+  min-width: 20vw;
+}
+
+.MuiGrid-item {
+  min-width: 12em;
+  max-width: 16em;
+}
