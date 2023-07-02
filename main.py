@@ -3,7 +3,7 @@ from ast import literal_eval
 from collections import Counter, OrderedDict
 from typing import Optional, Dict
 from functools import reduce
-from operator import or_
+from operator import and_
 
 import pandas as pd
 from fastapi import FastAPI, Cookie, HTTPException, Query
@@ -55,7 +55,7 @@ def search(ingredients: Optional[str] = Cookie(default=None, description="Comma 
     if q:  # filter by search terms, tags and name
         search_cols = ["search_terms", "tags", "_nameset"]
         search_bools = [dfc[col].apply(lambda x: bool(q & x)) for col in search_cols]
-        dfc = dfc[reduce(or_, search_bools)]  # or-combine all search_bools, so if any of the columns match, keep row
+        dfc = dfc[reduce(and_, search_bools)]  # or-combine all search_bools, so if any of the columns match, keep row
 
     # calculate score, and sort results by it
     selected_recipes = df.loc[list(selected)].ingredients
